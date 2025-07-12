@@ -1,54 +1,51 @@
 version: 1
-frontend:
-  phases:
-    preBuild:
-      commands:
-        - npm i -g pnpm
-        - pnpm config set store-dir .pnpm-store
-        - pnpm i --frozen-lockfile
-    build:
-      commands:
-        - echo "VITE_API_BASE_URL=$VITE_API_BASE_URL" >> .env.production
-        - pnpm --filter frontend build
-  artifacts:
-    baseDirectory: packages/frontend/dist
-    files:
-      - '**/*'
-  cache:
-    paths:
-      - .pnpm-store
-      - node_modules
-      - packages/frontend/node_modules
-  rewritesAndRedirects:
-    - source: '/api/<*>'
-      target: '/api/<*>'
-      type: PROXY
-    - source: /<*>
-      target: /index.html
-      status: '200'
-backend:
-  phases:
-    preBuild:
-      commands:
-        - npm i -g pnpm
-        - pnpm config set store-dir .pnpm-store
-        - pnpm i --frozen-lockfile
-    build:
-      commands:
-        - pnpm --filter server exec prisma generate
-        - pnpm --filter server exec prisma migrate deploy
-        - pnpm --filter server build
-  artifacts:
-    baseDirectory: packages/server
-    files:
-      - 'dist/**/*'
-      - 'node_modules/**/*'
-      - 'prisma/**/*'
-      - 'package.json'
-  cache:
-    paths:
-      - .pnpm-store
-      - node_modules
-      - packages/server/node_modules
-  start:
-    command: 'pnpm --filter server start'
+applications:
+  - appRoot: packages/frontend
+    env:
+      - VITE_API_BASE_URL=$VITE_API_BASE_URL
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm i -g pnpm
+            - pnpm config set store-dir ../../.pnpm-store
+            - pnpm i --frozen-lockfile
+        build:
+          commands:
+            - pnpm build
+      artifacts:
+        baseDirectory: dist
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules
+      rewritesAndRedirects:
+        - source: /<*>
+          target: /index.html
+          status: '200'
+  - appRoot: packages/server
+    backend:
+      phases:
+        preBuild:
+          commands:
+            - npm i -g pnpm
+            - pnpm config set store-dir ../../.pnpm-store
+            - pnpm i --frozen-lockfile
+        build:
+          commands:
+            - pnpm exec prisma generate
+            - pnpm exec prisma migrate deploy
+            - pnpm build
+      artifacts:
+        baseDirectory: .
+        files:
+          - 'dist/**/*'
+          - 'node_modules/**/*'
+          - 'prisma/**/*'
+          - 'package.json'
+      cache:
+        paths:
+          - node_modules
+      start:
+        command: 'pnpm start'
