@@ -1,43 +1,44 @@
 version: 1
-applications:
-  - appRoot: packages/frontend
-    frontend:
-      phases:
-        preBuild:
-          commands:
-            - npm i -g pnpm
-            - pnpm config set store-dir .pnpm-store
-            - pnpm i --frozen-lockfile
-        build:
-          commands:
-            - pnpm build
-      artifacts:
-        baseDirectory: dist
-        files:
-          - '**/*'
-      cache:
-        paths:
-          - .pnpm-store
-          - node_modules
-  - appRoot: packages/server
-    backend:
-      phases:
-        preBuild:
-          commands:
-            - npm i -g pnpm
-            - pnpm config set store-dir .pnpm-store
-            - pnpm i --frozen-lockfile
-        build:
-          commands:
-            - pnpm exec prisma generate
-            - pnpm exec prisma migrate deploy
-            - pnpm build
-      artifacts:
-        baseDirectory: dist
-        files:
-          - '**/*'
-        name: server-artifacts
-      cache:
-        paths:
-          - .pnpm-store
-          - node_modules
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm i -g pnpm
+        - pnpm config set store-dir .pnpm-store
+        - pnpm i --frozen-lockfile
+    build:
+      commands:
+        - pnpm --filter frontend build
+  artifacts:
+    baseDirectory: packages/frontend/dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - .pnpm-store
+      - node_modules
+      - packages/frontend/node_modules
+backend:
+  phases:
+    preBuild:
+      commands:
+        - npm i -g pnpm
+        - pnpm config set store-dir .pnpm-store
+        - pnpm i --frozen-lockfile
+    build:
+      commands:
+        - pnpm --filter server exec prisma generate
+        - pnpm --filter server exec prisma migrate deploy
+        - pnpm --filter server build
+  artifacts:
+    baseDirectory: packages/server
+    files:
+      - 'dist/**/*'
+      - 'node_modules/**/*'
+      - 'prisma/**/*'
+      - 'package.json'
+  cache:
+    paths:
+      - .pnpm-store
+      - node_modules
+      - packages/server/node_modules
