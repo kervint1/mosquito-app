@@ -8,6 +8,7 @@ frontend:
         - pnpm i --frozen-lockfile
     build:
       commands:
+        - echo "VITE_API_BASE_URL=$VITE_API_BASE_URL" >> .env.production
         - pnpm --filter frontend build
   artifacts:
     baseDirectory: packages/frontend/dist
