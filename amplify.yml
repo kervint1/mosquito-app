@@ -18,6 +18,10 @@ frontend:
       - .pnpm-store
       - node_modules
       - packages/frontend/node_modules
+  rewritesAndRedirects:
+    - source: '/api/<*>'
+      target: '/api/<*>'
+      type: PROXY
 backend:
   phases:
     preBuild:
