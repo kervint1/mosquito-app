@@ -46,3 +46,5 @@ backend:
       - .pnpm-store
       - node_modules
       - packages/server/node_modules
+  start:
+    command: 'npm start'
