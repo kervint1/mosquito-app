@@ -22,6 +22,9 @@ frontend:
     - source: '/api/<*>'
       target: '/api/<*>'
       type: PROXY
+    - source: /<*>
+      target: /index.html
+      status: '200'
 backend:
   phases:
     preBuild:
@@ -47,4 +50,4 @@ backend:
       - node_modules
       - packages/server/node_modules
   start:
-    command: 'npm start'
+    command: 'pnpm --filter server start'
