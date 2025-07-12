@@ -8,7 +8,7 @@ const port = process.env.PORT || 3001; // Amplifyではprocess.env.PORTを使用
 // CORS設定を本番環境に対応
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.FRONTEND_URL || 'https://your-frontend-domain.amplifyapp.com']
+    ? process.env.FRONTEND_URL // || 以降のフォールバックを削除
     : ['http://localhost:5173', 'http://localhost:3000'],
   credentials: true
 };
