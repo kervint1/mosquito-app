@@ -8,6 +8,8 @@ frontend:
         - pnpm i --frozen-lockfile
     build:
       commands:
+        # ↓↓↓ この行を追加・修正します ↓↓↓
+        - echo "VITE_API_BASE_URL=$VITE_API_BASE_URL" >> packages/frontend/.env.production
         - pnpm --filter frontend build
   artifacts:
     baseDirectory: packages/frontend/dist
